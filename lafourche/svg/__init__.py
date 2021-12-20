@@ -1,0 +1,2 @@
+from .dummysvggenerator import DummySvgGenerator
+from .simplesvggenerator import SimpleSvgGenerator

@@ -1,5 +1,0 @@
-# This is to ignore all files except the map test
-
-*
-!.gitignore
-!map.osm
