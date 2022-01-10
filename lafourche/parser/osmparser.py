@@ -25,11 +25,14 @@ class OsmParser(Parser):
 
     def __get_node_registry(self, tree_root: ElementTree) -> {int: Node}:
         """Returns a dictionary of node ID -> Node object"""
+        node_registry = {}
         for node in tree_root.iter('node'):
             # TODO(mv): implement
             self.logger.debug("Reading %s (%s, %s, %s)", node.tag, node.attrib.get('id'), node.attrib.get('lat'),
                               node.attrib.get('lon'))
-        return {}
+            node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'), node.attrib.get('lat'),
+                              node.attrib.get('lon'))
+        return node_registry
 
     def __get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
         """Returns a list of edges, keeping only the useful ones"""
