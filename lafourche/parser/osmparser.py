@@ -36,9 +36,38 @@ class OsmParser(Parser):
 
     def __get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
         """Returns a list of edges, keeping only the useful ones"""
+        edges = []
         for way in tree_root.iter('way'):
             # TODO(mv): implement
             self.logger.debug("Reading %s (%s)", way.tag, way.attrib)
+            if way.attrib.get('highway') == 'primary':
+                weight = 4
+            elif way.attrib.get('highway') == 'secondary':
+                weight = 3
+            elif way.attrib.get('highway') == 'residential':
+                weight = 2
+            elif way.attrib.get('highway') == 'pedestrian':
+                weight = 1
+            else:
+                weight = 0
+            i = 0
             for nodeRef in way.iter('nd'):
                 self.logger.debug("Reading %s (%s)", nodeRef.tag, nodeRef.attrib.get('ref'))
-        return []
+                if nodeRef.attrib.get('ref') in node_registry.keys():
+                    node = node_registry[nodeRef.attrib.get('ref')]
+                    if i == 0:
+                        node1 = node
+                        node2 = node
+                    elif not hasattr(node, 'longitude') or not hasattr(node, 'latitude'):
+                        continue
+                    else:
+                        if node.longitude <= node1.longitude and node.latitude <= node1.latitude:
+                            node1 = node
+                        if node.longitude >= node2.longitude and node.latitude >= node2.latitude:
+                            node2 = node
+                        i = i + 1
+                else:
+                    continue
+            edge = Edge(node1, node2, weight)
+            edges.append(edge)
+        return edges
