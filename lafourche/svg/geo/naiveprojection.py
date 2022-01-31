@@ -56,16 +56,14 @@ class NaiveProjection(Projection):
         # TODO(mv): implement
         pass
 
-    def __get_abscissa(self, latitude: float) -> int:
-        # TODO(mv): implement
-        pass
+    def __get_abscissa(self, longitude: float) -> int:
+        return (longitude - self.__bottom_left_lon) / (self.__top_right_lon - self.__bottom_left_lon) * self.__width
 
-    def __get_ordinate(self, longitude: float) -> int:
-        # TODO(mv): implement
-        pass
+    def __get_ordinate(self, latitude: float) -> int:
+        return (latitude - self.__bottom_left_lat) / (self.__top_right_lat - self.__bottom_left_lat) * self.__height
 
     @staticmethod
     def get_canvas_height(canvas_width: int, bottom_left_geopoint: (float, float),
                           top_right_geopoint: (float, float)) -> int:
-        # TODO(mv): implement
-        pass
+        height_width_ratio = (self.__top_right_lat - self.__bottom_left_lat) / (self.__top_right_lon - self.__bottom_left_lon)
+        return canvas_width * height_width_ratio
