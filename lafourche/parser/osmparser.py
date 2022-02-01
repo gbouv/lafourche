@@ -7,6 +7,37 @@ from ..model import Map, Node, Edge
 
 class OsmParser(Parser):
     logger = logging.getLogger(__name__)
+    __way_config = {
+            'highway': {
+                'motorway':10,
+                'trunk':10,
+                'primary':10,
+                'secondary':10,
+                'tertiary':10,
+                'unclassified':10,
+                'residential':10,
+                'service':10,
+                'motorway_link':5,
+                'trunk_link':5,
+                'primary_link':5,
+                'secondary_link':5,
+                'motorway_junction':5,
+                'living street':5,
+                'pedestrian':5,
+                'track':5,
+                'bus guideway':5,
+                'busway':5,
+                'raceway':5,
+                'road':5,
+                'construction':5,
+                'escape':5,
+                'footway':1,
+                'cycleway':1,
+                'bridleway':1,
+                'path':1,
+                'steps':1,
+            },
+        }
 
     @staticmethod
     def create() -> Parser:
@@ -38,38 +69,8 @@ class OsmParser(Parser):
         return node_registry
 
     def get_weight_for_way(self, way: ElementTree) -> int:
-        """Returns a weight for each way based on its tags"""
-        way_config = {
-            'highway': {
-                'motorway':10,
-                'trunk':10,
-                'primary':10,
-                'secondary':10,
-                'tertiary':10,
-                'unclassified':10,
-                'residential':10,
-                'service':10,
-                'motorway_link':5,
-                'trunk_link':5,
-                'primary_link':5,
-                'secondary_link':5,
-                'motorway_junction':5,
-                'living street':5,
-                'pedestrian':5,
-                'track':5,
-                'bus guideway':5,
-                'busway':5,
-                'raceway':5,
-                'road':5,
-                'construction':5,
-                'escape':5,
-                'footway':1,
-                'cycleway':1,
-                'bridleway':1,
-                'path':1,
-                'steps':1,
-            },
-        }
+        """Returns a weight for each way based on its tags. A weight of -1 means that the edge should be ignored."""
+        way_config = self.__way_config
         weight = -1
         for tag in way.iter('tag'):
             tag_key = tag.attrib.get('k')
@@ -77,7 +78,9 @@ class OsmParser(Parser):
             if tag_key in way_config.keys():
                 if tag_value in way_config[tag_key].keys():
                     weight = max(way_config[tag_key][tag_value], weight)
-        self.logger.debug("weight = %s", weight)
+        self.logger.debug("weight for way %s = %s", way.attrib.get('id'), weight)
+        if weight == -1:
+            self.logger.debug("Way %s is not interesting. We do not keep it.", way.attrib.get('id'))
         return weight
 
     def __get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
@@ -85,21 +88,18 @@ class OsmParser(Parser):
         edges = []
         for way in tree_root.iter('way'):
             weight = self.get_weight_for_way(way)
-            if weight == -1:
-                self.logger.debug("Way is not interesting. We do not keep it.")
-            else:
+            if weight > 0:
                 i = 0
                 for nodeRef in way.iter('nd'):
                     self.logger.debug("Reading %s (%s)", nodeRef.tag, nodeRef.attrib.get('ref'))
                     if nodeRef.attrib.get('ref') not in node_registry.keys():
-                        self.logger.debug("Node is not in registry")
-                        continue
+                        self.logger.error("%s is not in registry", str(nodeRef))
                     else:
                         node2 = node_registry[nodeRef.attrib.get('ref')]
                         if i != 0:
                             edge = Edge(node1, node2, weight)
                             edges.append(edge)
-                            self.logger.debug("edge added")
+                            self.logger.debug("Edge %s added", str(edge))
                         node1 = node2
                         i = i + 1
 
