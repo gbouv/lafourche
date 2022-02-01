@@ -3,3 +3,7 @@ build/*
 .idea/*
 
 .venv/*
+
+__pycache__/
+
+*.svg
