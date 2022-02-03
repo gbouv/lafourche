@@ -9,33 +9,33 @@ class OsmParser(Parser):
     logger = logging.getLogger(__name__)
     __way_config = {
             'highway': {
-                'motorway':10,
-                'trunk':10,
-                'primary':10,
-                'secondary':10,
-                'tertiary':10,
-                'unclassified':10,
-                'residential':10,
-                'service':10,
-                'motorway_link':5,
-                'trunk_link':5,
-                'primary_link':5,
-                'secondary_link':5,
-                'motorway_junction':5,
-                'living street':5,
-                'pedestrian':5,
-                'track':5,
-                'bus guideway':5,
-                'busway':5,
-                'raceway':5,
-                'road':5,
-                'construction':5,
-                'escape':5,
-                'footway':1,
-                'cycleway':1,
-                'bridleway':1,
-                'path':1,
-                'steps':1,
+                'motorway': 10,
+                'trunk': 10,
+                'primary': 10,
+                'secondary': 10,
+                'tertiary': 10,
+                'unclassified': 10,
+                'residential': 10,
+                'service': 10,
+                'motorway_link': 5,
+                'trunk_link': 5,
+                'primary_link': 5,
+                'secondary_link': 5,
+                'motorway_junction': 5,
+                'living street': 5,
+                'pedestrian': 5,
+                'track': 5,
+                'bus guideway': 5,
+                'busway': 5,
+                'raceway': 5,
+                'road': 5,
+                'construction': 5,
+                'escape': 5,
+                'footway': 1,
+                'cycleway': 1,
+                'bridleway': 1,
+                'path': 1,
+                'steps': 1,
             },
         }
 
@@ -60,12 +60,12 @@ class OsmParser(Parser):
         for node in tree_root.iter('node'):
             self.logger.debug("Reading %s (%s, %s, %s)", node.tag, node.attrib.get('id'), node.attrib.get('lat'),
                               node.attrib.get('lon'))
-            if node.attrib.get('id') == None or node.attrib.get('lon') == None or node.attrib.get('lat') == None:
+            if node.attrib.get('id') is None or node.attrib.get('lon') is None or node.attrib.get('lat') is None:
                 self.logger.debug("missing id or lon or lat for node %s", node)
                 continue
             else:
-                node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'),
-                              node.attrib.get('lon'), node.attrib.get('lat'))
+                node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'), node.attrib.get('lon'),
+                                                            node.attrib.get('lat'))
         return node_registry
 
     def get_weight_for_way(self, way: ElementTree) -> int:
@@ -90,6 +90,7 @@ class OsmParser(Parser):
             weight = self.get_weight_for_way(way)
             if weight > 0:
                 i = 0
+                node1 = node2 = None
                 for nodeRef in way.iter('nd'):
                     self.logger.debug("Reading %s (%s)", nodeRef.tag, nodeRef.attrib.get('ref'))
                     if nodeRef.attrib.get('ref') not in node_registry.keys():
