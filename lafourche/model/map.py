@@ -43,4 +43,3 @@ class Map:
         min_lon = bottom_left.longitude
         max_lon = top_right.longitude
         return Node(None, (max_lon + min_lon) / 2, (max_lat + min_lat) / 2)
-
