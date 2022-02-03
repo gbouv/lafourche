@@ -14,5 +14,5 @@ class TestOsmParser(unittest.TestCase):
         parser = OsmParser.create()
         map_result = parser.parse(osm_map)
 
-        # self.assertEqual(map_result.__len__(), 3, "Expected 3 edges on the map")
+        self.assertEqual(map_result.__len__(), 0, "Expected N edges on the map")
         # TODO(mv): add test for each edge

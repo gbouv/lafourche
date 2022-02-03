@@ -30,8 +30,8 @@ class OsmParser(Parser):
             # TODO(mv): implement
             self.logger.debug("Reading %s (%s, %s, %s)", node.tag, node.attrib.get('id'), node.attrib.get('lat'),
                               node.attrib.get('lon'))
-            node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'),
-                              node.attrib.get('lon'), node.attrib.get('lat'))
+            node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'), node.attrib.get('lon'),
+                                                        node.attrib.get('lat'))
         return node_registry
 
     def __get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
