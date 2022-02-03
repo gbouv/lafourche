@@ -1,9 +1,11 @@
+# distribution
 build/*
+dist/*
+lafourche.egg-info/
 
+# Development
 .idea/*
-
-.venv/*
-
-__pycache__/
-
 *.svg
+__pycache__/
+.venv/*
+.pytest_cache/
