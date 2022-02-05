@@ -180,5 +180,4 @@ class TestOsmParser(unittest.TestCase):
 
         parser = OsmParser.create()
         map_result = parser.parse(osm_map)
-
         self.assertEqual(map_result.__len__(), 18, "Expected 18 edges on the map")
