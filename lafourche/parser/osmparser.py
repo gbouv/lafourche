@@ -50,7 +50,7 @@ class OsmParser(Parser):
         tree = ElementTree.parse(filepath)
         node_registry = self.get_node_registry(tree.getroot())
 
-        edges = self.__get_edges(tree.getroot(), node_registry)
+        edges = self.get_edges(tree.getroot(), node_registry)
 
         return Map(edges)
 
@@ -61,7 +61,8 @@ class OsmParser(Parser):
             self.logger.debug("Reading %s (%s, %s, %s)", node.tag, node.attrib.get('id'), node.attrib.get('lat'),
                               node.attrib.get('lon'))
             if node.attrib.get('id') is None or node.attrib.get('lon') is None or node.attrib.get('lat') is None:
-                self.logger.debug("missing id or lon or lat for node %s", node)
+                self.logger.debug("Missing id or lon or lat for %s (%s, %s, %s)",
+                                  node.tag, node.attrib.get('id'), node.attrib.get('lat'), node.attrib.get('lon'))
                 continue
             else:
                 node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'), node.attrib.get('lon'),
@@ -83,7 +84,7 @@ class OsmParser(Parser):
             self.logger.debug("Way %s is not interesting. We do not keep it.", way.attrib.get('id'))
         return weight
 
-    def __get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
+    def get_edges(self, tree_root: ElementTree, node_registry: {int: Node}) -> []:
         """Returns a list of edges, keeping only the useful ones"""
         edges = []
         for way in tree_root.iter('way'):
@@ -92,15 +93,15 @@ class OsmParser(Parser):
                 i = 0
                 node1 = None
                 for nodeRef in way.iter('nd'):
-                    self.logger.debug("Reading %s (%s)", nodeRef.tag, nodeRef.attrib.get('ref'))
+                    self.logger.debug("Reading %s %s", nodeRef.tag, nodeRef.attrib.get('ref'))
                     if nodeRef.attrib.get('ref') not in node_registry.keys():
-                        self.logger.error("%s is not in registry", str(nodeRef))
+                        self.logger.error("Node %s is not in registry", nodeRef.attrib.get('ref'))
                     else:
                         node2 = node_registry[nodeRef.attrib.get('ref')]
                         if i != 0:
                             edge = Edge(node1, node2, weight)
                             edges.append(edge)
-                            self.logger.debug("Edge %s added", str(edge))
+                            self.logger.debug("%s added", edge)
                         node1 = node2
                         i = i + 1
 
