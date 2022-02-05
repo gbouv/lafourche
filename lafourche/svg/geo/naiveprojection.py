@@ -1,4 +1,5 @@
 import logging
+import math
 
 from .projection import Projection
 
@@ -44,6 +45,7 @@ class NaiveProjection(Projection):
         return NaiveProjection(canvas_size, bottom_left_geopoint, top_right_geopoint)
 
     def project(self, longitude: float, latitude: float) -> (int, int):
+        self.__validate(longitude, latitude)
         abscissa = self.__get_abscissa(longitude)
         ordinate = self.__get_ordinate(latitude)
         self.logger.debug("Converting (%s; %s) into (%s; %s)", longitude, latitude, abscissa, ordinate)
@@ -53,17 +55,20 @@ class NaiveProjection(Projection):
         return self.__width, self.__height
 
     def __validate(self, longitude: float, latitude: float):
-        # TODO(mv): implement
-        pass
+        if longitude < self.__bottom_left_lon or longitude > self.__top_right_lon \
+                or latitude < self.__bottom_left_lat or latitude > self.__top_right_lat:
+            raise ValueError("Coordinate Out of Range")
 
     def __get_abscissa(self, longitude: float) -> int:
-        return (longitude - self.__bottom_left_lon) / (self.__top_right_lon - self.__bottom_left_lon) * self.__width
+        center_lon = (self.__top_right_lon + self.__bottom_left_lon) / 2
+        return round((longitude - center_lon) / (self.__top_right_lon - self.__bottom_left_lon) * self.__width)
 
     def __get_ordinate(self, latitude: float) -> int:
-        return (latitude - self.__bottom_left_lat) / (self.__top_right_lat - self.__bottom_left_lat) * self.__height
+        center_lat = (self.__top_right_lat + self.__bottom_left_lat) / 2
+        return round((latitude - center_lat) / (self.__top_right_lat - self.__bottom_left_lat) * self.__height)
 
     @staticmethod
     def get_canvas_height(canvas_width: int, bottom_left_geopoint: (float, float),
                           top_right_geopoint: (float, float)) -> int:
-        height_width_ratio = (self.__top_right_lat - self.__bottom_left_lat) / (self.__top_right_lon - self.__bottom_left_lon)
-        return canvas_width * height_width_ratio
+        height_width_ratio = (top_right_geopoint[1] - bottom_left_geopoint[1]) / (top_right_geopoint[0] - bottom_left_geopoint[0])
+        return math.ceil(canvas_width * height_width_ratio)
