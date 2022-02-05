@@ -19,5 +19,5 @@ class TestNaiveProjection(unittest.TestCase):
         # self.assertEqual(projection.project(2.32544, 48.88758), (-128, 128))
         # self.assertEqual(projection.project(2.32573, 48.88745), (128, -128))
         # self.assertEqual(projection.project(2.32573, 48.88758), (128, 128))
-
+        #
         # self.assertEqual(projection.project(2.325585, 48.887515), (0, 0))
