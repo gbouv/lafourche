@@ -6,20 +6,22 @@ from ...model.geopoint import Geopoint
 
 
 class NaiveProjection(Projection):
-    """Most naive coordinate projection ever
+    """Naive coordinate projection. Each geo coordinate is projected by doing a simple ratio of its latitude /
+    longitude.
 
-    Project all coordinates into a rectangle defined by:
+    All coordinates are projected into a rectangle defined by:
     top_left_coord = (0 ; 0)
     top_right_coord = (__width ; 0)
     bottom_left_coord = (0 ; __height)
     bottom_right_coord = (__width ; __height)
 
-    Each geo coordinate is projected by doing a simple ratio of its latitude / longitude;
+    The height and width of the canvas is computed using a constant number of pixels per meter
     """
 
     logger = logging.getLogger(__name__)
 
     # canvas size
+    __px_per_deg = 100_000  # 0.01 deg -> 1000 px at the equator
     __height: int
     __width: int
 
@@ -34,9 +36,8 @@ class NaiveProjection(Projection):
         self.__top_right = top_right_geopoint
 
     @staticmethod
-    def create(canvas_width: int, bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> Projection:
-        canvas_size = (canvas_width,
-                       NaiveProjection.get_canvas_height(canvas_width, bottom_left_geopoint, top_right_geopoint))
+    def create(bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> Projection:
+        canvas_size = NaiveProjection.get_canvas_size(bottom_left_geopoint, top_right_geopoint)
         return NaiveProjection(canvas_size, bottom_left_geopoint, top_right_geopoint)
 
     def project(self, geopoint: Geopoint) -> (int, int):
@@ -63,7 +64,14 @@ class NaiveProjection(Projection):
                      * self.__height)
 
     @staticmethod
-    def get_canvas_height(canvas_width: int, bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> int:
-        height_width_ratio = (top_right_geopoint.lat - bottom_left_geopoint.lat) \
-                             / (top_right_geopoint.lon - bottom_left_geopoint.lon)
-        return math.ceil(canvas_width * height_width_ratio)
+    def get_canvas_size(bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> (int, int):
+        height = (top_right_geopoint.lat - bottom_left_geopoint.lat) * NaiveProjection.__px_per_deg
+
+        avg_lat = (top_right_geopoint.lat + bottom_left_geopoint.lat) / 2
+        # for the longitude, __px_per_deg is applicable at the equator. The longitude needs to be "corrected" based on
+        # the average latitude of the zone
+        longitude_correction_factor = math.cos(avg_lat * math.pi / 180)
+        width = (top_right_geopoint.lon - bottom_left_geopoint.lon) * NaiveProjection.__px_per_deg \
+            * longitude_correction_factor
+
+        return math.ceil(width), math.ceil(height)
