@@ -13,8 +13,5 @@ class Geopoint:
             return False
         return o.lon == self.lon and o.lat == self.lat
 
-    def __str__(self) -> str:
-        return "Geopoint(lon: " + str(self.lon) + ", lat: " + str(self.lat) + ")"
-
     def __repr__(self) -> str:
-        return self.__str__()
+        return "Geopoint(lon: " + str(self.lon) + ", lat: " + str(self.lat) + ")"

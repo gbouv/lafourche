@@ -11,5 +11,5 @@ class Edge:
         self.node2 = node2
         self.weight = weight
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return "Edge(node1: " + str(self.node1) + ", node2: " + str(self.node2) + ", weight: " + str(self.weight) + ")"

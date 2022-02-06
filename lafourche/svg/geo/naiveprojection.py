@@ -27,16 +27,14 @@ class NaiveProjection(Projection):
     __bottom_left: Geopoint
     __top_right: Geopoint
 
-    def __init__(self, canvas_size: (int, int), bottom_left_geopoint: Geopoint,
-                 top_right_geopoint: Geopoint):
+    def __init__(self, canvas_size: (int, int), bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint):
         self.__width = canvas_size[0]
         self.__height = canvas_size[1]
         self.__bottom_left = bottom_left_geopoint
         self.__top_right = top_right_geopoint
 
     @staticmethod
-    def create(canvas_width: int, bottom_left_geopoint: Geopoint,
-               top_right_geopoint: Geopoint) -> Projection:
+    def create(canvas_width: int, bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> Projection:
         canvas_size = (canvas_width,
                        NaiveProjection.get_canvas_height(canvas_width, bottom_left_geopoint, top_right_geopoint))
         return NaiveProjection(canvas_size, bottom_left_geopoint, top_right_geopoint)
@@ -65,8 +63,7 @@ class NaiveProjection(Projection):
         return round((latitude - center_lat) / (self.__top_right.lat - self.__bottom_left.lat) * self.__height)
 
     @staticmethod
-    def get_canvas_height(canvas_width: int, bottom_left_geopoint: Geopoint,
-                          top_right_geopoint: Geopoint) -> int:
+    def get_canvas_height(canvas_width: int, bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> int:
         height_width_ratio = (top_right_geopoint.lat - bottom_left_geopoint.lat)\
                              / (top_right_geopoint.lon - bottom_left_geopoint.lon)
         return math.ceil(canvas_width * height_width_ratio)

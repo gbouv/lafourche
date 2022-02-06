@@ -14,8 +14,5 @@ class Node:
             return False
         return o.coord == self.coord and o.__node_id == self.__node_id
 
-    def __str__(self) -> str:
-        return "Node(id: " + str(self.__node_id) + ", coord: " + str(self.coord) + ")"
-
     def __repr__(self) -> str:
-        return self.__str__()
+        return "Node(id: " + str(self.__node_id) + ", coord: " + str(self.coord) + ")"
