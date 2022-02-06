@@ -42,3 +42,15 @@ class TestGeohashConverter(unittest.TestCase):
 
         square = converter.decode(geohash)
         self.assertIsNone(square)
+
+    def test_encode_1(self):
+        converter = GeohashConverter()
+
+        geohash = converter.encode(2.3475, 48.8525, 6)
+        self.assertEqual(geohash, "u09tvm")
+
+    def test_encode_2(self):
+        converter = GeohashConverter()
+
+        geohash = converter.encode(-94.5695, -68.9055, 6)
+        self.assertEqual(geohash, "1gub00")

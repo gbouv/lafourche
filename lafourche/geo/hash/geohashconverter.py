@@ -8,7 +8,7 @@ class GeohashConverter:
 
     __base32 = "0123456789bcdefghjkmnpqrstuvwxyz"
 
-    def decode(self, geohash: str):
+    def decode(self, geohash: str) -> [(float, float), (float, float)]:
         self.logger.debug("Decoding geohash %s", geohash)
 
         min_lat = -90
@@ -42,3 +42,36 @@ class GeohashConverter:
         result = [(min_lon, min_lat), (max_lon, max_lat)]
         self.logger.debug("Decoded geohash %s -> %s", geohash, result)
         return result
+
+    def encode(self, longitude: float, latitude: float, geohash_length: int) -> str:
+        self.logger.debug("Encoding geo coordinate (%s, %s), geohash length %s", longitude, latitude, geohash_length)
+
+        min_lat = -90
+        max_lat = 90
+        min_lon = -180
+        max_lon = 180
+
+        lon_next = 1
+        geohash = ""
+        while len(geohash) < geohash_length:
+            index = 0
+            for i in range(0, 5):
+                if lon_next:
+                    middle = (max_lon + min_lon) / 2
+                    if longitude > middle:
+                        min_lon = middle
+                        index = index << 1 | 1
+                    else:
+                        max_lon = middle
+                        index = index << 1 | 0
+                else:
+                    middle = (max_lat + min_lat) / 2
+                    if latitude > middle:
+                        min_lat = middle
+                        index = index << 1 | 1
+                    else:
+                        max_lat = middle
+                        index = index << 1 | 0
+                lon_next = lon_next ^ 1
+            geohash = geohash + self.__base32[index]
+        return geohash
