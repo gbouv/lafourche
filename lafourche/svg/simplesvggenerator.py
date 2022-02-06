@@ -28,8 +28,8 @@ class SimpleSvgGenerator(SvgGenerator):
         drawing = svgwrite.Drawing(filename=temporary_file, size=projection.canvas_size())
 
         for edge in map_to_export:
-            from_point = projection.project(edge.node1.latitude, edge.node1.longitude)
-            to_point = projection.project(edge.node2.latitude, edge.node2.longitude)
+            from_point = projection.project(edge.node1.coord)
+            to_point = projection.project(edge.node2.coord)
 
             self.logger.debug("Adding line to canvas from (%s) to (%s) (weight %s)", from_point, to_point, edge.weight)
             line = drawing.line(from_point, to_point, stroke=self.__COLOR, stroke_width=edge.weight)
