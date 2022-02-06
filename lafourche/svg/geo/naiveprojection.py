@@ -9,10 +9,10 @@ class NaiveProjection(Projection):
     """Most naive coordinate projection ever
 
     Project all coordinates into a rectangle defined by:
-    top_left_coord = (- __width / 2 ; + __height / 2)
-    top_right_coord = (+ __width / 2 ; + __height / 2)
-    bottom_left_coord = (- __width / 2 ; - __height / 2)
-    bottom_right_coord = (+ __width / 2 ; - __height / 2)
+    top_left_coord = (0 ; 0)
+    top_right_coord = (__width ; 0)
+    bottom_left_coord = (0 ; __height)
+    bottom_right_coord = (__width ; __height)
 
     Each geo coordinate is projected by doing a simple ratio of its latitude / longitude;
     """
@@ -55,15 +55,15 @@ class NaiveProjection(Projection):
             raise ValueError("Coordinate Out of Range")
 
     def __get_abscissa(self, longitude: float) -> int:
-        center_lon = (self.__top_right.lon + self.__bottom_left.lon) / 2
-        return round((longitude - center_lon) / (self.__top_right.lon - self.__bottom_left.lon) * self.__width)
+        return round((longitude - self.__bottom_left.lon) / (self.__top_right.lon - self.__bottom_left.lon)
+                     * self.__width)
 
     def __get_ordinate(self, latitude: float) -> int:
-        center_lat = (self.__top_right.lat + self.__bottom_left.lat) / 2
-        return round((latitude - center_lat) / (self.__top_right.lat - self.__bottom_left.lat) * self.__height)
+        return round((self.__top_right.lat - latitude) / (self.__top_right.lat - self.__bottom_left.lat)
+                     * self.__height)
 
     @staticmethod
     def get_canvas_height(canvas_width: int, bottom_left_geopoint: Geopoint, top_right_geopoint: Geopoint) -> int:
-        height_width_ratio = (top_right_geopoint.lat - bottom_left_geopoint.lat)\
+        height_width_ratio = (top_right_geopoint.lat - bottom_left_geopoint.lat) \
                              / (top_right_geopoint.lon - bottom_left_geopoint.lon)
         return math.ceil(canvas_width * height_width_ratio)

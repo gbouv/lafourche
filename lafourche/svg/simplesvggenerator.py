@@ -13,7 +13,7 @@ class SimpleSvgGenerator(SvgGenerator):
 
     logger = logging.getLogger(__name__)
 
-    __CANVAS_WIDTH = 256
+    __CANVAS_WIDTH = 1024
     __COLOR = svgwrite.rgb(0, 0, 0)
 
     @staticmethod
