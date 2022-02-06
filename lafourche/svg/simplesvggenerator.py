@@ -13,7 +13,6 @@ class SimpleSvgGenerator(SvgGenerator):
 
     logger = logging.getLogger(__name__)
 
-    __CANVAS_WIDTH = 1024
     __COLOR = svgwrite.rgb(0, 0, 0)
 
     @staticmethod
@@ -21,7 +20,7 @@ class SimpleSvgGenerator(SvgGenerator):
         return SimpleSvgGenerator()
 
     def generate(self, map_to_export: Map) -> str:
-        projection = self.__get_projection(map_to_export)
+        projection = SimpleSvgGenerator.__get_projection(map_to_export)
 
         temporary_file = tempfile.mktemp(suffix='.svg')
         self.logger.debug("Temporary file name %s", temporary_file)
@@ -38,7 +37,6 @@ class SimpleSvgGenerator(SvgGenerator):
         drawing.save()
         return temporary_file
 
-    def __get_projection(self, map_to_export: Map) -> Projection:
-        return NaiveProjection.create(self.__CANVAS_WIDTH,
-                                      map_to_export.get_bottom_left(),
-                                      map_to_export.get_top_right())
+    @staticmethod
+    def __get_projection(map_to_export: Map) -> Projection:
+        return NaiveProjection.create(map_to_export.get_bottom_left(), map_to_export.get_top_right())
