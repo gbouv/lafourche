@@ -15,10 +15,6 @@ class SimpleSvgGenerator(SvgGenerator):
 
     __COLOR = svgwrite.rgb(0, 0, 0)
 
-    @staticmethod
-    def create() -> SvgGenerator:
-        return SimpleSvgGenerator()
-
     def generate(self, map_to_export: Map) -> str:
         projection = SimpleSvgGenerator.__get_projection(map_to_export)
 
