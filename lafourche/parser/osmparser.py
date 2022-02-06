@@ -61,13 +61,15 @@ class OsmParser(Parser):
         for node in tree_root.iter('node'):
             self.logger.debug("Reading %s (%s, %s, %s)", node.tag, node.attrib.get('id'), node.attrib.get('lat'),
                               node.attrib.get('lon'))
-            if node.attrib.get('id') is None or node.attrib.get('lon') is None or node.attrib.get('lat') is None:
-                self.logger.debug("Missing id or lon or lat for %s (%s, %s, %s)",
-                                  node.tag, node.attrib.get('id'), node.attrib.get('lat'), node.attrib.get('lon'))
+            try:
+                node_id = int(node.attrib.get('id'))
+                node_lon = float(node.attrib.get('lon'))
+                node_lat = float(node.attrib.get('lat'))
+            except (ValueError, TypeError) as ex:
+                self.logger.warning("An attribute of the node %s could not be parsed to a valid value (%s, %s, %s) %s",
+                                    node.tag, node.attrib.get('id'), node.attrib.get('lat'), node.attrib.get('lon'), ex)
                 continue
-            else:
-                node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'),
-                                                            Geopoint(node.attrib.get('lon'), node.attrib.get('lat')))
+            node_registry[node.attrib.get('id')] = Node(node_id, Geopoint(node_lon, node_lat))
         return node_registry
 
     def get_weight_for_way(self, way: ElementTree) -> int:
