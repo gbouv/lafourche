@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ElementTree
 
 from .parser import Parser
 from ..model import Map, Node, Edge
+from ..model.geopoint import Geopoint
 
 
 class OsmParser(Parser):
@@ -65,8 +66,8 @@ class OsmParser(Parser):
                                   node.tag, node.attrib.get('id'), node.attrib.get('lat'), node.attrib.get('lon'))
                 continue
             else:
-                node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'), node.attrib.get('lon'),
-                                                            node.attrib.get('lat'))
+                node_registry[node.attrib.get('id')] = Node(node.attrib.get('id'),
+                                                            Geopoint(node.attrib.get('lon'), node.attrib.get('lat')))
         return node_registry
 
     def get_weight_for_way(self, way: ElementTree) -> int:

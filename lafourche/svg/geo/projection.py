@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from lafourche.model.geopoint import Geopoint
+
 
 class Projection(ABC):
     """Project a geo-point (lat, lon) onto an orthogonal coordinate system
@@ -8,7 +10,7 @@ class Projection(ABC):
     """
 
     @abstractmethod
-    def project(self, longitude: float, latitude: float) -> (int, int):
+    def project(self, geopoint: Geopoint) -> (int, int):
         pass
 
     @abstractmethod

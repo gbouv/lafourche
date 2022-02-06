@@ -12,4 +12,4 @@ class Edge:
         self.weight = weight
 
     def __str__(self) -> str:
-        return "Edge(" + str(self.node1) + ", " + str(self.node2) + ", " + str(self.weight) + ")"
+        return "Edge(node1: " + str(self.node1) + ", node2: " + str(self.node2) + ", weight: " + str(self.weight) + ")"
