@@ -10,9 +10,9 @@ class NaiveProjection(Projection):
 
     Project all coordinates into a rectangle defined by:
     top_left_coord = (0 ; 0)
-    top_right_coord = (+ __width ; 0)
-    bottom_left_coord = (0 ; + __height)
-    bottom_right_coord = (+ __width ; + __height)
+    top_right_coord = (__width ; 0)
+    bottom_left_coord = (0 ; __height)
+    bottom_right_coord = (__width ; __height)
 
     Each geo coordinate is projected by doing a simple ratio of its latitude / longitude;
     """
