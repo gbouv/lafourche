@@ -34,7 +34,7 @@ class TestOsmParser(unittest.TestCase):
         way = self.get_elementtree_from_xml(xml).getroot()
         weight = parser.get_weight_for_way(way)
 
-        self.assertEqual(10, weight, "Expected weight 10 for primary highway")
+        self.assertEqual(6, weight, "Expected weight 10 for primary highway")
 
     def test_get_weight_for_way_highway_unknown(self):
         parser = OsmParser()
@@ -74,7 +74,7 @@ class TestOsmParser(unittest.TestCase):
         way = self.get_elementtree_from_xml(xml).getroot()
         weight = parser.get_weight_for_way(way)
 
-        self.assertEqual(10, weight, "Expected weight 10 for secondary highway")
+        self.assertEqual(5, weight, "Expected weight 10 for secondary highway")
 
     def test_get_weight_for_no_highway(self):
         parser = OsmParser()
