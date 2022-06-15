@@ -2,6 +2,7 @@ import logging
 import unittest
 
 from lafourche.geo.hash import GeohashConverter
+from lafourche.model.geopoint import Geopoint
 
 
 class TestGeohashConverter(unittest.TestCase):
@@ -12,14 +13,12 @@ class TestGeohashConverter(unittest.TestCase):
         converter = GeohashConverter()
 
         square = converter.decode(geohash)
-        min_lon = square[0][0]
-        min_lat = square[0][1]
-        max_lon = square[1][0]
-        max_lat = square[1][1]
-        self.assertAlmostEqual(min_lon, 2.34695434, places=6)
-        self.assertAlmostEqual(max_lon, 2.34832763, places=6)
-        self.assertAlmostEqual(min_lat, 48.85208129, places=6)
-        self.assertAlmostEqual(max_lat, 48.85345458, places=6)
+        bottom_left = square[0]
+        top_right = square[1]
+        self.assertAlmostEqual(bottom_left.lon, 2.34695434, places=6)
+        self.assertAlmostEqual(top_right.lon, 2.34832763, places=6)
+        self.assertAlmostEqual(bottom_left.lat, 48.85208129, places=6)
+        self.assertAlmostEqual(top_right.lat, 48.85345458, places=6)
 
     def test_decode_2(self):
         geohash = "1gub000"
@@ -27,14 +26,12 @@ class TestGeohashConverter(unittest.TestCase):
         converter = GeohashConverter()
 
         square = converter.decode(geohash)
-        min_lon = square[0][0]
-        min_lat = square[0][1]
-        max_lon = square[1][0]
-        max_lat = square[1][1]
-        self.assertAlmostEqual(min_lon, -94.57031250, places=6)
-        self.assertAlmostEqual(max_lon, -94.56893920, places=6)
-        self.assertAlmostEqual(min_lat, -68.90625000, places=6)
-        self.assertAlmostEqual(max_lat, -68.90487670, places=6)
+        bottom_left = square[0]
+        top_right = square[1]
+        self.assertAlmostEqual(bottom_left.lon, -94.57031250, places=6)
+        self.assertAlmostEqual(top_right.lon, -94.56893920, places=6)
+        self.assertAlmostEqual(bottom_left.lat, -68.90625000, places=6)
+        self.assertAlmostEqual(top_right.lat, -68.90487670, places=6)
 
     def test_decode_invalid(self):
         geohash = "gui"
@@ -42,3 +39,15 @@ class TestGeohashConverter(unittest.TestCase):
 
         square = converter.decode(geohash)
         self.assertIsNone(square)
+
+    def test_encode_1(self):
+        converter = GeohashConverter()
+
+        geohash = converter.encode(Geopoint(2.3475, 48.8525), 6)
+        self.assertEqual(geohash, "u09tvm")
+
+    def test_encode_2(self):
+        converter = GeohashConverter()
+
+        geohash = converter.encode(Geopoint(-94.5695, -68.9055), 6)
+        self.assertEqual(geohash, "1gub00")
